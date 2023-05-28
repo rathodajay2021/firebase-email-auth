@@ -4,6 +4,11 @@ import {
   createUserWithEmailAndPassword,
   onAuthStateChanged,
   signInWithEmailAndPassword,
+  signOut,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInWithRedirect,
+  sendPasswordResetEmail,
 } from "firebase/auth";
 
 const AuthContext = React.createContext();
@@ -15,6 +20,7 @@ export function useAuth() {
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const provider = new GoogleAuthProvider();
 
   const signUpUser = async (email, password) => {
     try {
@@ -42,10 +48,57 @@ export function AuthProvider({ children }) {
     }
   };
 
+  const logoutUser = async () => {
+    return await signOut(auth);
+  };
+
+  const signInWithGoogle = async () => {
+    try {
+      return await signInWithPopup(auth, provider);
+    } catch (error) {
+      console.log(
+        "🚀 ~ file: AuthContext.jsx:59 ~ signInWithGoogle ~ error:",
+        error,
+        error?.code,
+        error?.message
+      );
+    }
+  };
+
+  const signInWithGoogleRedirect = async () => {
+    try {
+      return await signInWithRedirect(auth, provider);
+    } catch (error) {
+      console.log(
+        "🚀 ~ file: AuthContext.jsx:59 ~ signInWithGoogleRedirect ~ error:",
+        error,
+        error?.code,
+        error?.message
+      );
+    }
+  };
+
+  const resetPasswordHandler = async (email) => {
+    try {
+      return await sendPasswordResetEmail(auth, email);
+    } catch (error) {
+      console.log(
+        "🚀 ~ file: AuthContext.jsx:59 ~ resetPassword ~ error:",
+        error,
+        error?.code,
+        error?.message
+      );
+    }
+  };
+
   const AuthProviderValue = {
     currentUser,
     signUpUser,
     SignInUser,
+    logoutUser,
+    signInWithGoogle,
+    signInWithGoogleRedirect,
+    resetPasswordHandler,
   };
 
   useEffect(() => {

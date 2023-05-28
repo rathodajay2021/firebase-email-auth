@@ -18,7 +18,9 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 
 //CUSTOM
 import { SignUpWrapper } from "./SignUp.style";
-
+import { Link } from "react-router-dom";
+import { URL_LOGIN } from "Components/Helpers/Paths";
+import { useAuth } from "Context/AuthContext";
 
 const SIGN_UP_INIT_VALUE = {
   email: "",
@@ -37,12 +39,21 @@ const FORM_VALIDATION = Yup.object({
 });
 
 const SignUp = () => {
+  const { signUpUser } = useAuth();
   const [passwordVisibility, setPasswordVisibility] = useState(false);
   const [confirmPasswordVisibility, setConfirmPasswordVisibility] =
     useState(false);
 
-  const handleSubmit = (values, { resetForm }) => {
-    console.log("🚀 ~ file: SignUp.jsx:13 ~ handleSubmit ~ values:", values);
+  const handleSubmit = async (values, { resetForm }) => {
+    try {
+      const response = await signUpUser(values?.email, values?.password);
+
+      if (response) {
+        console.log("signUp page handleSubmit", response);
+      }
+    } catch (error) {
+      console.log("signUp page handleSubmit", error);
+    }
   };
 
   return (
@@ -114,6 +125,11 @@ const SignUp = () => {
                   type={confirmPasswordVisibility ? "text" : "password"}
                   value={values.confirmPassword}
                   onChange={handleChange}
+                  onKeyDown={(e) => {
+                    if (e.keyCode === 13) {
+                      handleSubmit();
+                    }
+                  }}
                   InputProps={{
                     endAdornment: (
                       <InputAdornment position="end">
@@ -142,12 +158,9 @@ const SignUp = () => {
             </>
           )}
         </Formik>
-        <Box className='flex f-h-center sub-title-wrapper'>
-          <Typography className="sub-title">
-            Already have an account? 
-          </Typography>
-          <Typography className="sub-title url">LogIn</Typography>
-        </Box>
+        <Typography className="sub-title">
+          Already have an account? <Link to={URL_LOGIN}>LogIn</Link>
+        </Typography>
       </Box>
     </SignUpWrapper>
   );

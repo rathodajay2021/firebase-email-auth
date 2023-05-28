@@ -31,11 +31,5 @@ export const SignUpWrapper = styled.div`
       font-weight: 700;
       text-transform: capitalize;
     }
-
-    .sub-title-wrapper{
-        gap: 5px;
-
-        
-    }
   }
 `;
